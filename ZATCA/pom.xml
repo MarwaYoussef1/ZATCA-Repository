@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>STC</groupId>
+	<artifactId>ZATCA</artifactId>
+
+	<version>1.0-SNAPSHOT</version>
+	<name>ZATCA</name>
+	<properties>
+		<!-- Execution Properties -->
+		<!-- Make sure you point to the latest in-house version: https://bintray.com/mohabmohie/SHAFT/SHAFT_Engine -->
+		<shaft_engine.version>7.3.20230804</shaft_engine.version>
+		<org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+
+
+		<!-- The directory for your test suite files -->
+		<testSuite.directory>src\test\resources\TestSuites\</testSuite.directory>
+
+		<!-- The name of your testSuite file [without the file extension] -->
+		<testSuiteName>JobSuite</testSuiteName>
+		<targetBrowserName>GoogleChrome</targetBrowserName> <!-- Acceptable Values: Default | MozillaFirefox | MicrosoftInternetExplorer 
+			| GoogleChrome | MicrosoftEdge | Safari -->
+		<headlessExecution>true</headlessExecution><!-- Acceptable Values: false 
+			open browser | true run without browser -->
+		<targetOperatingSystem>Windows-64</targetOperatingSystem> <!-- Windows-64 || Linux-64 -->
+
+
+		<customListeners.list>com.shaft.listeners.TestNGListener</customListeners.list>
+
+		<!-- SHAFT_Engine Properties and other property files are read from the 
+			below location -->
+		<!-- Refer to this folder to view the default properties, you can create 
+			a new .properties file and override what you need: https://github.com/MohabMohie/SHAFT_ENGINE/tree/master/src/test/resources/Properties -->
+		<propertiesFolderPath>src/main/resources/properties/</propertiesFolderPath>
+		<propertiesFolderPath_jenkins></propertiesFolderPath_jenkins>
+
+
+		<!-- Dependencies and Plug-ins Version Numbers Parameters -->
+		<!-- DO NOT CHANGE -->
+		<encoding.type>UTF-8</encoding.type>
+		<jdk.version>17</jdk.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+		<surefire-testng.version>3.1.2</surefire-testng.version>
+		<aspectjweaver.version>1.9.19</aspectjweaver.version>
+		<apachecommons.version>2.7</apachecommons.version>
+		<commons-lang.version>2.6</commons-lang.version>
+	</properties>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-configuration2</artifactId>
+			<version>${apachecommons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.shafthq</groupId>
+			<artifactId>SHAFT_ENGINE</artifactId>
+			<version>${shaft_engine.version}</version>
+		</dependency>
+
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${encoding.type}</encoding>
+					<maxmem>10240m</maxmem>
+					<meminitial>1024m</meminitial>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<outputDirectory>target/classes</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<!-- <reuseForks>false</reuseForks> -->
+					<!-- <forkCount>2C</forkCount> -->
+					<!-- <threadCount>10</threadCount> -->
+					<!-- <threadCount>1</threadCount> -->
+					<!-- <perCoreThreadCount>false</perCoreThreadCount> -->
+					<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+					<failIfNoTests>false</failIfNoTests>
+					<systemPropertyVariables>
+						<testng.dtd.http>true</testng.dtd.http>
+						<org.slf4j.simpleLogger.defaultLogLevel>${org.slf4j.simpleLogger.defaultLogLevel}
+						</org.slf4j.simpleLogger.defaultLogLevel>
+						<shaftEngineVersion>${shaft_engine.version}</shaftEngineVersion>
+						<propertiesFolderPath>${propertiesFolderPath}</propertiesFolderPath>
+						<propertiesFolderPath_jenkins>${propertiesFolderPath_jenkins}</propertiesFolderPath_jenkins>
+						<targetBrowserName>${targetBrowserName}</targetBrowserName>
+						<headlessExecution>${headlessExecution}</headlessExecution>
+						<targetOperatingSystem>${targetOperatingSystem}</targetOperatingSystem>
+					</systemPropertyVariables>
+					<suiteXmlFiles>
+						<suiteXmlFile>src\test\resources\TestSuites\${testSuiteName}.xml</suiteXmlFile>
+					</suiteXmlFiles>
+					<encoding>${encoding.type}</encoding>
+					<argLine>
+						-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectjweaver.version}/aspectjweaver-${aspectjweaver.version}.jar"
+					</argLine>
+					<properties>
+						<property>
+							<name>usedefaultlisteners</name>
+							<value>false</value>
+						</property>
+						<property>
+							<name>listener</name>
+							<value>${customListeners.list}</value>
+						</property>
+					</properties>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjweaver</artifactId>
+						<version>${aspectjweaver.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-testng</artifactId>
+						<version>${surefire-testng.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>

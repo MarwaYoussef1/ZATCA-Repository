@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="ZATCA API Suite">
+	 <test name="Test Accepted Standard Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDStandardInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testAcceptedClearanceInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	 <test name="Test Accepted Simplified Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDSimplifiedInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testAcceptedReportingInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
