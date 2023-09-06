@@ -131,17 +131,21 @@ public class Utils {
     
     public static String cmd(File dir, String command) {
         System.out.println("> " + command);   // better to use e.g. Slf4j
-        System.out.println(); 
+        System.out.println();
+        ReportManager.log(command);
         String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
             Process p =Runtime.getRuntime().exec(commands, null, dir);
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
-           /* String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
+            String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
             System.out.println(result);
+            System.out.println(error);
+            ReportManager.log(error);
             if (error != null && !error.isEmpty()) {  // throw exception if error stream
                 throw new RuntimeException(error);
-            }*/
-            System.out.println(result);   // better to use e.g. Slf4j
+            }
+           
+          
             return result;                // return result for optional additional processing
         } catch (IOException e) {
             throw new RuntimeException(e);

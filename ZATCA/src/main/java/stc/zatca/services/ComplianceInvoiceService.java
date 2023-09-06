@@ -51,7 +51,7 @@ public class ComplianceInvoiceService {
 					.addHeader("Accept-Version", "V2").addHeader("Accept-Language", "en").addHeader("Authentication-Certificate", token)
 					.setContentType(ContentType.JSON).setRequestBody(jsonObject).perform();
 			
-			ReportManager.logDiscrete(response.body().asPrettyString());
+			ReportManager.log(response.body().asPrettyString());
 			if(response.getStatusCode()==Constants.STATUS_CODE)
 			{
 			responeObj=response.body().as(ComplianceInvoiceResponse.class);
