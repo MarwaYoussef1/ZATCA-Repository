@@ -135,13 +135,18 @@ public class Utils {
         ReportManager.log(command);
         String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
+        	 ReportManager.log("Commands are  "+ commands);
             Process p =Runtime.getRuntime().exec(commands, null, dir);
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
-            System.out.println(result);
-            System.out.println(error);
+            System.out.println("Command Result is "+ result);
+            ReportManager.log("Command Result is "+ result);
+         
             ReportManager.log(error);
-            if (error != null && !error.isEmpty()) {  // throw exception if error stream
+            if (error != null && !error.isEmpty()) { 
+            	// throw exception if error stream
+            	 System.out.println("Command Error is "+error);
+                ReportManager.log("Command Error is "+error);
                 throw new RuntimeException(error);
             }
            
