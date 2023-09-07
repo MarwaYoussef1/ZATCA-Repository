@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -136,7 +137,16 @@ public class Utils {
         String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
         	 ReportManager.log("Commands are  "+ commands);
-            Process p =Runtime.getRuntime().exec(commands, null, dir);
+           /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
+        	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
+        	 pb.directory(dir);
+             Map<String, String> envs = pb.environment();
+            
+             envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
+             envs.put("Path",
+                     "C:/Program Files/Java/jdk-11.0.17/bin" + ";" + System.getenv("Path"));
+             System.out.println(envs.get("Path"));
+            Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
             System.out.println("Command Result is "+ result);
@@ -147,7 +157,7 @@ public class Utils {
             	// throw exception if error stream
             	 System.out.println("Command Error is "+error);
                 ReportManager.log("Command Error is "+error);
-               // throw new RuntimeException(error);
+               throw new RuntimeException(error);
             }
            
           
