@@ -6,11 +6,8 @@
 package stc.zatca.utils;
 
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -142,7 +139,7 @@ public class Utils {
         try {
         	 ReportManager.log("Commands are  "+ commands);
            /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
-        	 List<String> cmds = Arrays.asList("cmd.exe", "/C",command );
+        	 List<String> cmds = Arrays.asList("cmd.exe", "/c",command);
         	 ProcessBuilder pb = new ProcessBuilder(cmds);
         	 pb.directory(dir);
              Map<String, String> envs = pb.environment();
@@ -155,10 +152,6 @@ public class Utils {
              System.out.println("Path here is: "+pb.environment().get("Path"));
              System.out.println("Path here is finshed");
             Process p= pb.start();
-            
-         
-            
-            
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
             System.out.println("Command Result is "+ result);
