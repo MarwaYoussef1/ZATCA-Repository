@@ -153,6 +153,7 @@ public class Utils {
              
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
+            p.destroy();
             System.out.println("Command Result is "+ result);
             ReportManager.log("Command Result is "+ result);
          
