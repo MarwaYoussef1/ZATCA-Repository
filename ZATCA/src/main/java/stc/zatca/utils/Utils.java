@@ -137,10 +137,10 @@ public class Utils {
         String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
         	 ReportManager.log("Commands are  "+ commands);
-           /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
-        	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
-        	 pb.directory(dir);
-             Map<String, String> envs = pb.environment();
+             Process p =Runtime.getRuntime().exec(commands, null, dir);
+        	 //ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
+        	 //pb.directory(dir);
+             /*Map<String, String> envs = pb.environment();
             
              envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
              envs.remove("Path");
@@ -149,7 +149,8 @@ public class Utils {
                      "C:\\Program Files\\Java\\jdk-11.0.17/bin" + ";" + newPath);
              System.out.println("Path here is: "+pb.environment().get("Path"));
              System.out.println("Path here is finshed");
-            Process p= pb.start();
+            Process p= pb.start();*/
+             
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
             System.out.println("Command Result is "+ result);
