@@ -145,7 +145,8 @@ public class Utils {
              envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
              envs.put("Path",
                      "C:/Program Files/Java/jdk-11.0.17/bin" + ";" + System.getenv("Path"));
-             System.out.println(envs.get("Path"));
+             System.out.println("Path here is: "+envs.get("Path"));
+             System.out.println("Path here is finshed");
             Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
