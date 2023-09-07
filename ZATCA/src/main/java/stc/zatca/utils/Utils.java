@@ -138,7 +138,7 @@ public class Utils {
         try {
         	 ReportManager.log("Commands are  "+ commands);
            /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
-        	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
+        	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C","start",command);
         	 pb.directory(dir);
              Map<String, String> envs = pb.environment();
             
