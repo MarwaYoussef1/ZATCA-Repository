@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.Configuration;
@@ -139,8 +138,7 @@ public class Utils {
         try {
         	 ReportManager.log("Commands are  "+ commands);
            /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
-        	 List<String> cmds = Arrays.asList("cmd.exe", "/c",command);
-        	 ProcessBuilder pb = new ProcessBuilder(cmds);
+        	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
         	 pb.directory(dir);
              Map<String, String> envs = pb.environment();
             
