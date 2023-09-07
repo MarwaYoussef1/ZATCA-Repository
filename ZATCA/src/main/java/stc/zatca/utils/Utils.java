@@ -143,9 +143,11 @@ public class Utils {
              Map<String, String> envs = pb.environment();
             
              envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
+             envs.remove("Path");
+             String newPath=System.getenv("Path").replace("jdk-17.0.1","jdk-11.0.17");
              envs.put("Path",
-                     "C:\\Program Files\\Java\\jdk-11.0.17/bin" + ";" + System.getenv("Path"));
-             System.out.println("Path here is: "+envs.get("Path").replace("jdk-17.0.1","jdk-11.0.17"));
+                     "C:\\Program Files\\Java\\jdk-11.0.17/bin" + ";" + newPath);
+             System.out.println("Path here is: "+pb.environment().get("Path"));
              System.out.println("Path here is finshed");
             Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
