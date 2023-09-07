@@ -146,8 +146,6 @@ public class Utils {
              envs.remove("Path");
              String newPath=System.getenv("Path").replace("jdk-17.0.1","jdk-11.0.17");
              envs.put("Path",Constants.SDK_JAVA_PATH_BIN+ ";" + newPath);
-             System.out.println("Path here is: "+pb.environment().get("Path"));
-             System.out.println("Path here is finshed");
             Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
