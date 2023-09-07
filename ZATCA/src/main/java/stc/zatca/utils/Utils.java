@@ -147,7 +147,7 @@ public class Utils {
             	// throw exception if error stream
             	 System.out.println("Command Error is "+error);
                 ReportManager.log("Command Error is "+error);
-                throw new RuntimeException(error);
+               // throw new RuntimeException(error);
             }
            
           
