@@ -52,6 +52,7 @@ public class ComplianceInvoiceService {
 					.setContentType(ContentType.JSON).setRequestBody(jsonObject).perform();
 			
 			ReportManager.log(response.body().asPrettyString());
+			System.out.println(response.body().asPrettyString());
 			if(response.getStatusCode()==Constants.STATUS_CODE)
 			{
 			responeObj=response.body().as(ComplianceInvoiceResponse.class);

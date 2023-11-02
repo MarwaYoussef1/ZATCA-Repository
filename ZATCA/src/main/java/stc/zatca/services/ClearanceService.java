@@ -51,8 +51,9 @@ public class ClearanceService {
 			Response response = apiObj.buildNewRequest(clearanceUrl, RequestType.POST).setAuthentication(token, secret, AuthenticationType.BASIC)
 					.addHeader("Accept-Version", "V2").addHeader("Accept-Language", "en").addHeader("Authentication-Certificate", token)
 					.setContentType(ContentType.JSON).setRequestBody(jsonObject).perform();
-			
+			System.out.println(response.body().asPrettyString());
 			ReportManager.log(response.body().asPrettyString());
+			
 			if(response.getStatusCode()==Constants.STATUS_CODE)
 			{
 			responeObj=response.body().as(ClearanceResponse.class);

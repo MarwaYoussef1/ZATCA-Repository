@@ -134,18 +134,17 @@ public class Utils {
         System.out.println("> " + command);   // better to use e.g. Slf4j
         System.out.println();
         ReportManager.log(command);
-        String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
+       // String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
-        	 ReportManager.log("Commands are  "+ commands);
+        	// ReportManager.log("Commands are  "+ commands);
            /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
         	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
         	 pb.directory(dir);
-             Map<String, String> envs = pb.environment();
-            
+        	 Map<String, String> envs = pb.environment();
              envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
              envs.remove("Path");
              String newPath=System.getenv("Path").replace("jdk-17.0.1","jdk-11.0.17");
-             envs.put("Path",Constants.SDK_JAVA_PATH_BIN+ ";" + newPath);
+             envs.put("Path",Constants.SDK_JAVA_PATH_BIN+ ";" + newPath+";"+";"+Constants.SDK_FOLDER_PATH);
             Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);

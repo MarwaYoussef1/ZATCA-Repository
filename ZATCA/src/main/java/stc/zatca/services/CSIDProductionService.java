@@ -45,6 +45,7 @@ public class CSIDProductionService {
 				.addHeader("Accept-Version", "V2").setContentType(ContentType.JSON).setRequestBody(requestParams).perform();
 		
 		ReportManager.log(response.body().asPrettyString());
+		System.out.println(response.body().asPrettyString());
 		
 	
 	    if(response.getStatusCode()==Constants.STATUS_CODE)

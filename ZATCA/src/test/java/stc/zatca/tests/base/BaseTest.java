@@ -1,7 +1,12 @@
 package stc.zatca.tests.base;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.io.IOUtils;
 
 import com.shaft.api.RestActions;
 import com.shaft.driver.DriverFactory;
@@ -17,6 +22,7 @@ public abstract class BaseTest  {
 	static SHAFT.API driver; 
 	static {
 		readConfigurationFile();
+		
 	}
 	
 	
@@ -31,11 +37,18 @@ public abstract class BaseTest  {
 		}
 		return properties;	
 	}
+	
+	
 	public static void getBaseApiObj()
 	{
 		 String baseUrl=properties.getProperty("BaseUrl");
 		 apiObj=DriverFactory.getAPIDriver(baseUrl);
 		// driver=new SHAFT.API(baseUrl);
+	}
+	
+	public void clearFolders()
+	{
+		
 	}
 	
 
