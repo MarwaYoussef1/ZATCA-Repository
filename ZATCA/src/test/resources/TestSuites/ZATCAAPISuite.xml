@@ -5,7 +5,7 @@
 		<classes>
 			<class name="stc.zatca.tests.OnboardingTests">
 				<methods>
-					<include name="testCSIDStandardInvoice" />
+					<include name="testCSIDStandardAcceptedInvoice" />
 				</methods>
 			</class>
 			<class name="stc.zatca.tests.ClearanceReportingTests">
@@ -20,7 +20,7 @@
 		<classes>
 			<class name="stc.zatca.tests.OnboardingTests">
 				<methods>
-					<include name="testCSIDSimplifiedInvoice" />
+					<include name="testCSIDSimplifiedAcceptedInvoice" />
 				</methods>
 			</class>
 			<class name="stc.zatca.tests.ClearanceReportingTests">
@@ -30,4 +30,34 @@
 			</class>
 		</classes>
 	</test> 
+	
+	<test name="Test Warning Standard Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDStandardWarningInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testAcceptedClearanceInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="Test Warning Simplified Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDSimplifiedWarningInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testAcceptedClearanceInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>

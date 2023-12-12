@@ -33,9 +33,10 @@ public class GenerateOtpService {
 	public String generateOtp(int noOfOtps,String vatNumber) {
 		ReportManager.log("Start OTP generation .");
 		String otp = null;
+		String apiKey=properties.getProperty("GenerateOtpAPIKey");
 		List<List<Object>> noOfOtpsValue=Arrays.asList(Arrays.asList("noOfOtp",noOfOtps)) ;
 		Response response = apiObj.buildNewRequest(generateOtpUrl, RequestType.GET)
-				.addHeader("vat", vatNumber).addHeader("request-from", "zatca-service").setParameters(noOfOtpsValue, ParametersType.QUERY).perform();
+				.addHeader("vat", vatNumber).addHeader("request-from", "zatca-service").addHeader("api-key", apiKey).setParameters(noOfOtpsValue, ParametersType.QUERY).perform();
 		ReportManager.log(response.body().asPrettyString());		
 	    if(response.getStatusCode()==Constants.STATUS_CODE)
 	    {

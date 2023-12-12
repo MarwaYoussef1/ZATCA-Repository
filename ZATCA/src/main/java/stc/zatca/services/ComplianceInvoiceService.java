@@ -37,7 +37,7 @@ public class ComplianceInvoiceService {
 
 	}
 
-	public ComplianceInvoiceResponse generateComplianceInvoice(String token,String secret,String invoiceBody) {
+	public ComplianceInvoiceResponse generateComplianceInvoice(String token,String secret,String invoiceBody,int expectedStatusCode) {
 		ReportManager.log("Start calling complianceInvoice service to clear or report invoice");
 		ComplianceInvoiceResponse responeObj = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -53,7 +53,7 @@ public class ComplianceInvoiceService {
 			
 			ReportManager.log(response.body().asPrettyString());
 			System.out.println(response.body().asPrettyString());
-			if(response.getStatusCode()==Constants.STATUS_CODE)
+			if(response.getStatusCode()==expectedStatusCode)
 			{
 			responeObj=response.body().as(ComplianceInvoiceResponse.class);
 			clearenceStatus=responeObj.getClearanceStatus();

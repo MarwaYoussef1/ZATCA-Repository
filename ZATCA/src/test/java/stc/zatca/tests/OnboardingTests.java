@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import com.shaft.tools.io.ReportManager;
 import com.shaft.validation.Validations;
 
+import stc.zatca.bussiness.Commands.InvoiceResultType;
 import stc.zatca.bussiness.Commands.InvoiceType;
 import stc.zatca.bussiness.GenerateCSID;
 import stc.zatca.pojo.CSIDProductionResponse;
@@ -21,195 +22,371 @@ import stc.zatca.tests.base.BaseTest;
 import stc.zatca.utils.Constants;
 
 public class OnboardingTests extends BaseTest {
-	
+
 	public GenerateCSID generateCSIDObj;
-	
-	
+
 	@BeforeMethod
 	public void beforeMethod() {
 		getBaseApiObj();
-		generateCSIDObj=new GenerateCSID(apiObj,properties);
-		
+		generateCSIDObj = new GenerateCSID(apiObj, properties);
+
 	}
-	
+
 	/**
-	 * Function to read data for testCSIDStandardInvoice testcase
+	 * Function to read data for testCSIDStandardAcceptedInvoice testcase
 	 *
 	 * @return Object[][] 2d array contains data from excel sheet
 	 */
 
-	@DataProvider(name = "testCSIDStandardInvoiceTestData")
+	@DataProvider(name = "testCSIDStandardAcceptedInvoiceTestData")
 	public Object[][] testCSIDStandardInvoiceTestData() throws InvalidFormatException, IOException {
 
-		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDStandardInvoice");
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDStandardAcceptedInvoice");
 		return data;
 	}
-	
+
 	/**
-	 * Function to read data for testCSIDSimplifiedInvoice testcase
+	 * Function to read data for testCSIDSimplifiedAcceptedInvoice testcase
 	 *
 	 * @return Object[][] 2d array contains data from excel sheet
 	 */
 
-	@DataProvider(name = "testCSIDSimplifiedInvoiceTestData")
+	@DataProvider(name = "testCSIDSimplifiedAcceptedInvoiceTestData")
 	public Object[][] testCSIDSimplifiedInvoiceTestData() throws InvalidFormatException, IOException {
 
-		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDSimplifiedInvoice");
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"),
+				"testCSIDSimplifiedAcceptedInvoice");
 		return data;
 	}
-	
+
 	/**
 	 * Function to read data for testCSIDBothInvoice testcase
 	 *
 	 * @return Object[][] 2d array contains data from excel sheet
 	 */
 
-	@DataProvider(name = "testCSIDBothInvoiceTestData")
-	public Object[][] testCSIDBothInvoiceTestData() throws InvalidFormatException, IOException {
+	@DataProvider(name = "testCSIDBothAcceptedInvoiceTestData")
+	public Object[][] testCSIDBothAcceptedInvoiceTestData() throws InvalidFormatException, IOException {
 
-		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDBothInvoice");
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDBothAcceptedInvoice");
+		return data;
+	}
+
+	/**
+	 * Function to read data for testCSIDStandardWarningInvoiceTestData testcase
+	 *
+	 * @return Object[][] 2d array contains data from excel sheet
+	 */
+
+	@DataProvider(name = "testCSIDStandardWarningInvoiceTestData")
+	public Object[][] testCSIDStandardWarningInvoiceTestData() throws InvalidFormatException, IOException {
+
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDStandardWarningInvoice");
+		return data;
+	}
+
+	/**
+	 * Function to read data for testCSIDSimplifiedWarningInvoiceTestData testcase
+	 *
+	 * @return Object[][] 2d array contains data from excel sheet
+	 */
+
+	@DataProvider(name = "testCSIDSimplifiedWarningInvoiceTestData")
+	public Object[][] testCSIDSimplifiedWarningInvoiceTestData() throws InvalidFormatException, IOException {
+
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"),
+				"testCSIDSimplifiedWarningInvoice");
 		return data;
 	}
 	
-	
-	@Test(description="Create CSID for standard invoice",dataProvider = "testCSIDStandardInvoiceTestData") 
-	public void testCSIDStandardInvoice(String invoiceFileName,String invoiceCreditFileName,String invoiceDebitFileName,
-			String csrFileName,String vatNumber,ITestContext testContext){
+	/**
+	 * Function to read data for testCSIDBothWarningInvoice testcase
+	 *
+	 * @return Object[][] 2d array contains data from excel sheet
+	 */
+
+	@DataProvider(name = "testCSIDBothWarningInvoiceTestData")
+	public Object[][] testCSIDBothWarningInvoiceTestData() throws InvalidFormatException, IOException {
+
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testCSIDBothWarningInvoice");
+		return data;
+	}
+
+	@Test(description = "Create CSID for standard  Accepted invoice", dataProvider = "testCSIDStandardAcceptedInvoiceTestData")
+	public void testCSIDStandardAcceptedInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
 		ReportManager.log("Start Standard Flow.");
-		String token=null;
+		String token = null;
 		String secretKey = null;
-		String requestId=null;
-		ComplianceCSIDResponse ComplianceCSIDResponseObj=null;
-		ComplianceInvoiceResponse ComplianceInvoiceResponseObj=null;
-		CSIDProductionResponse CSIDProductionResponseObj=null;
-		
-		//Step1 validate , generate CSR & Call compliance CSID Service
-		
-		ComplianceCSIDResponseObj=generateCSIDObj.complianceCSID(InvoiceType.STANDARDNOTE,invoiceFileName, vatNumber, csrFileName);
+		String requestId = null;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+		boolean complianceInvoice;
+		// Step1 validate , generate CSR & Call compliance CSID Service
+
+		ComplianceCSIDResponseObj = generateCSIDObj.generateStandardCSID(InvoiceType.STANDARDNOTE,
+				InvoiceResultType.ACCEPTED, invoiceFileName, vatNumber, csrFileName);
 		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
 		ReportManager.log("Initial CSID generated by all details successfully");
-		token=ComplianceCSIDResponseObj.getBinarySecurityToken();
-		secretKey=ComplianceCSIDResponseObj.getSecret();
-		requestId=ComplianceCSIDResponseObj.getRequestID();
-		//Step2 Generate invoice request & call compliance invoice to clear the invoices 
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, invoiceFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Invoice Note cleared successfully.");
-	    ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, invoiceCreditFileName, token, secretKey);
-	    Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Credit Invoice Note cleared successfully.");
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, invoiceDebitFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Debit Invoice Note cleared successfully.");
-		CSIDProductionResponseObj=generateCSIDObj.csidProduction(token, secretKey, requestId);
-        Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
-        testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
-        testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
-        ReportManager.log("Standard Production CSID generated successfully.");
-		 
-	}
-	
-	@Test(description="Create CSID for simplified invoice",dataProvider = "testCSIDSimplifiedInvoiceTestData") 
-	public void testCSIDSimplifiedInvoice(String invoiceFileName,String invoiceCreditFileName,String invoiceDebitFileName,
-			String csrFileName,String vatNumber,ITestContext testContext){
-		
-		String token=null;
-		String secretKey = null;
-		String requestId=null;
-		ComplianceCSIDResponse ComplianceCSIDResponseObj=null;
-		ComplianceInvoiceResponse ComplianceInvoiceResponseObj=null;
-		CSIDProductionResponse CSIDProductionResponseObj=null;
-		
-		
-		//Step1 validate , generate CSR & Call compliance CSID Service
-		ComplianceCSIDResponseObj=generateCSIDObj.complianceSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,invoiceFileName, vatNumber, csrFileName);
-		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
-		ReportManager.log("Initial CSID generated by all details successfully");
-		token=ComplianceCSIDResponseObj.getBinarySecurityToken();
-		secretKey=ComplianceCSIDResponseObj.getSecret();
-		requestId=ComplianceCSIDResponseObj.getRequestID();
-		//Step2 Generate invoice request & call compliance invoice to clear the invoices 
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE, invoiceFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Invoice Note cleared successfully.");
-	    ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT, invoiceCreditFileName, token, secretKey);
-	    Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Credit Invoice Note cleared successfully.");
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT, invoiceDebitFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Debit Invoice Note cleared successfully.");
-		CSIDProductionResponseObj=generateCSIDObj.csidProduction(token, secretKey, requestId);
-        Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
-        testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
-        testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
-        ReportManager.log("Standard Production CSID generated successfully.");
-		 
-	}
-	
-	
-	@Test(description="Create CSID for standard/simplified invoices",dataProvider = "testCSIDBothInvoiceTestData") 
-	public void testCSIDBothInvoice(String invoiceFileName,String invoiceCreditFileName,String invoiceDebitFileName,String standardInvoiceFileName,
-			String standardInvoiceCreditFileName,String standardInvoiceDebitFileName,String csrFileName,String vatNumber,ITestContext testContext){
-		
-		String token=null;
-		String secretKey = null;
-		String requestId=null;
-		ComplianceCSIDResponse ComplianceCSIDResponseObj=null;
-		ComplianceInvoiceResponse ComplianceInvoiceResponseObj=null;
-		CSIDProductionResponse CSIDProductionResponseObj=null;
-		
-		
-		//Step1 validate , generate CSR & Call compliance CSID Service
-		ComplianceCSIDResponseObj=generateCSIDObj.complianceSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,invoiceFileName, vatNumber, csrFileName);
-		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
-		ReportManager.log("Initial CSID generated by all details successfully");
-		token=ComplianceCSIDResponseObj.getBinarySecurityToken();
-		secretKey=ComplianceCSIDResponseObj.getSecret();
-		requestId=ComplianceCSIDResponseObj.getRequestID();
-		//Step2 Generate invoice request & call compliance invoice to clear the invoices 
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE, invoiceFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Invoice Note cleared successfully.");
-	    ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT, invoiceCreditFileName, token, secretKey);
-	    Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Credit Invoice Note cleared successfully.");
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT, invoiceDebitFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Debit Invoice Note cleared successfully.");
-		
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, standardInvoiceFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Invoice Note cleared successfully.");
-	    ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, standardInvoiceCreditFileName, token, secretKey);
-	    Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-		ReportManager.log("Standard Credit Invoice Note cleared successfully.");
-		ComplianceInvoiceResponseObj=generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, standardInvoiceDebitFileName, token, secretKey);
-		Validations.assertThat().object(ComplianceInvoiceResponseObj).isNotNull().perform();
-		Validations.assertThat().object(ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS").perform();
-				ReportManager.log("Standard Debit Invoice Note cleared successfully.");
-		
-				
-		CSIDProductionResponseObj=generateCSIDObj.csidProduction(token, secretKey, requestId);
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the
+		// invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTED,
+				invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTED,
+				invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTED,
+				invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted  Debit Invoice Note cleared successfully.");
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
 		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
-	     testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
-	     testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
-        ReportManager.log("Standard Production CSID generated successfully.");
-		 
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Standard Production CSID generated successfully.");
+
+	}
+
+	@Test(description = "Create CSID for simplified Accepted invoice", dataProvider = "testCSIDSimplifiedAcceptedInvoiceTestData")
+	public void testCSIDSimplifiedAcceptedInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
+
+		String token = null;
+		String secretKey = null;
+		String requestId = null;
+		boolean complianceInvoice;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+
+		// Step1 validate , generate CSR & Call compliance CSID Service
+		ComplianceCSIDResponseObj = generateCSIDObj.generateSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTED, invoiceFileName, vatNumber, csrFileName);
+		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
+		ReportManager.log("Initial CSID generated by all details successfully");
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
+				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
+				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted  Debit Invoice Note cleared successfully.");
+		
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
+		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Standard Production CSID generated successfully.");
+
+	}
+
+	@Test(description = "Create CSID for standard/simplified Accepted invoices", dataProvider = "testCSIDBothAcceptedInvoiceTestData")
+	public void testCSIDBothAcceptedInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String standardInvoiceFileName, String standardInvoiceCreditFileName,
+			String standardInvoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
+
+		String token = null;
+		String secretKey = null;
+		String requestId = null;
+		boolean complianceInvoice;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+
+		// Step1 validate , generate CSR & Call compliance CSID Service
+		ComplianceCSIDResponseObj = generateCSIDObj.generateSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTED, invoiceFileName, vatNumber, csrFileName);
+		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
+		ReportManager.log("Initial CSID generated by all details successfully");
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the
+		// invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTED,
+				standardInvoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTED,
+				standardInvoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTED,
+				standardInvoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Accepted  Debit Invoice Note cleared successfully.");
+
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
+				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
+				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Accepted  Debit Invoice Note cleared successfully.");
+
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
+		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Standard Production CSID generated successfully.");
+
+	}
+
+	@Test(description = "Create CSID for standard  Accepted  with Warning invoice", dataProvider = "testCSIDStandardWarningInvoiceTestData")
+	public void testCSIDStandardWarningInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
+		ReportManager.log("Start Standard Flow for invoices with warnings.");
+		String token = null;
+		String secretKey = null;
+		String requestId = null;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		boolean complianceInvoice;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+
+		// Step1 validate , generate CSR & Call compliance CSID Service
+		ComplianceCSIDResponseObj = generateCSIDObj.generateStandardCSID(InvoiceType.STANDARDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, vatNumber, csrFileName);
+		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
+		ReportManager.log("Initial CSID generated by all details successfully");
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the
+		// invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard  Warning Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Warning Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Warning  Debit Invoice Note cleared successfully.");
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
+		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Standard Production CSID generated successfully.");
+
+	}
+
+	@Test(description = "Create CSID for simplified Accepted With warning invoice", dataProvider = "testCSIDSimplifiedWarningInvoiceTestData")
+	public void testCSIDSimplifiedWarningInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
+
+		String token = null;
+		String secretKey = null;
+		String requestId = null;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+		boolean complianceInvoice;
+
+		// Step1 validate , generate CSR & Call compliance CSID Service
+		ComplianceCSIDResponseObj = generateCSIDObj.generateSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, vatNumber, csrFileName);
+		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
+		ReportManager.log("Initial CSID generated by all details successfully");
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the
+		// invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Warning Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified Warning Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified Warning  Debit Invoice Note cleared successfully.");
+
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
+		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Standard Production CSID generated successfully.");
+
 	}
 	
-	
-	
-    
-	
+	@Test(description = "Create CSID for standard/simplified Warning invoices", dataProvider = "testCSIDBothWarningInvoiceTestData")
+	public void testCSIDBothWarningInvoice(String invoiceFileName, String invoiceCreditFileName,
+			String invoiceDebitFileName, String standardInvoiceFileName, String standardInvoiceCreditFileName,
+			String standardInvoiceDebitFileName, String csrFileName, String vatNumber, ITestContext testContext) {
+
+		String token = null;
+		String secretKey = null;
+		String requestId = null;
+		boolean complianceInvoice;
+		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
+		CSIDProductionResponse CSIDProductionResponseObj = null;
+
+		// Step1 validate , generate CSR & Call compliance CSID Service
+		ComplianceCSIDResponseObj = generateCSIDObj.generateSimplifiedCSID(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, vatNumber, csrFileName);
+		Validations.assertThat().object(ComplianceCSIDResponseObj.getErrors()).isNull().perform();
+		ReportManager.log("Initial CSID generated by all details successfully");
+		token = ComplianceCSIDResponseObj.getBinarySecurityToken();
+		secretKey = ComplianceCSIDResponseObj.getSecret();
+		requestId = ComplianceCSIDResponseObj.getRequestID();
+		// Step2 Generate invoice request & call compliance invoice to clear the
+		// invoices
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTEDWITHWARNIG,
+				standardInvoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Warning Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTEDWITHWARNIG,
+				standardInvoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Warning Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTEDWITHWARNIG,
+				standardInvoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Standard Warning  Debit Invoice Note cleared successfully.");
+
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Warning Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Warning Credit Invoice Note cleared successfully.");
+		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+		Validations.assertThat().object(complianceInvoice).isTrue().perform();
+		ReportManager.log("Simplified  Warning  Debit Invoice Note cleared successfully.");
+
+		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
+		Validations.assertThat().object(CSIDProductionResponseObj.getRequestID()).isNotNull().perform();
+		testContext.setAttribute(Constants.BINARYSECURITYTOKEN, CSIDProductionResponseObj.getBinarySecurityToken());
+		testContext.setAttribute(Constants.SECRET, CSIDProductionResponseObj.getSecret());
+		ReportManager.log("Both Production CSID generated successfully.");
+
+	}
+
 }

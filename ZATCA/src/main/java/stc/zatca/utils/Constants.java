@@ -7,6 +7,7 @@ public interface Constants {
     public static final String SDK_JAVA_PATH="C:\\Program Files\\Java\\jdk-11.0.17";
     public static final String SDK_JAVA_PATH_BIN="C:\\Program Files\\Java\\jdk-11.0.17/bin";
 	public static final int STATUS_CODE=200;
+	public static final int WARNING_STATUS_CODE=202;
 	public static final String BINARYSECURITYTOKEN="binarySecurityToken";
 	public static final String SECRET="secret";
 	

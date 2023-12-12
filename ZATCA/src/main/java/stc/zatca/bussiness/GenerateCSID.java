@@ -1,8 +1,12 @@
 package stc.zatca.bussiness;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -10,14 +14,17 @@ import com.shaft.api.RestActions;
 import com.shaft.cli.FileActions;
 import com.shaft.tools.io.ReportManager;
 
+import stc.zatca.bussiness.Commands.InvoiceResultType;
 import stc.zatca.bussiness.Commands.InvoiceType;
 import stc.zatca.pojo.CSIDProductionResponse;
 import stc.zatca.pojo.ComplianceCSIDResponse;
+import stc.zatca.pojo.complianceInvoice.ComplianceInvoiceMessage;
 import stc.zatca.pojo.complianceInvoice.ComplianceInvoiceResponse;
 import stc.zatca.services.CSIDProductionService;
 import stc.zatca.services.ComplianceCSIDService;
 import stc.zatca.services.ComplianceInvoiceService;
 import stc.zatca.services.GenerateOtpService;
+import stc.zatca.utils.Constants;
 import stc.zatca.utils.Utils;
 
 public class GenerateCSID {
@@ -34,17 +41,19 @@ public class GenerateCSID {
 		this.commands=new Commands(properties);
 
 	}
+	
 
-	public ComplianceCSIDResponse complianceCSID(InvoiceType type, String invoiceFileName, String vatNumber,
+	public ComplianceCSIDResponse generateStandardCSID(InvoiceType type, InvoiceResultType invoiceResultType,String invoiceFileName, String vatNumber,
 			String csrFileName) {
 		GenerateOtpService otpService = new GenerateOtpService(apiObj, properties);
 		ComplianceCSIDService complianceCSIDService = new ComplianceCSIDService(apiObj, properties);
 		ComplianceCSIDResponse ComplianceCSIDResponseObj = null;
 
+		commands.setInvoiceResultType(invoiceResultType);
 		FileActions fileActions = new FileActions();
 		String otp = null;
 		//Step1 validate the invoice
-		boolean validInvoice = commands.validateInvoice(invoiceFileName, type);
+		boolean validInvoice = commands.validateInvoice(invoiceFileName, type);		
 		if (validInvoice) {
 			//Step2 Generate CSR
 			Collection<File> csrGeneratedFiles = commands.generateCSR(csrFileName, type);
@@ -66,12 +75,16 @@ public class GenerateCSID {
 			}
 
 		}
+		else
+		{
+			ReportManager.log("Invoice not validated successfully");
+		}
 
 		return ComplianceCSIDResponseObj;
 
 	}
 	
-	public ComplianceCSIDResponse complianceSimplifiedCSID(InvoiceType type, String invoiceFileName, String vatNumber,
+	public ComplianceCSIDResponse generateSimplifiedCSID(InvoiceType type,InvoiceResultType invoiceResultType, String invoiceFileName, String vatNumber,
 			String csrFileName) {
 		GenerateOtpService otpService = new GenerateOtpService(apiObj, properties);
 		ComplianceCSIDService complianceCSIDService = new ComplianceCSIDService(apiObj, properties);
@@ -79,7 +92,7 @@ public class GenerateCSID {
 		String binaryToken=null;
 		String binaryTokenDecoded=null;
 		
-
+		commands.setInvoiceResultType(invoiceResultType);
 		FileActions fileActions = new FileActions();
 		String otp = null;
 		//Step1 Generate CSR
@@ -124,15 +137,82 @@ public class GenerateCSID {
 		return ComplianceCSIDResponseObj;
 
 	}
-
-	public ComplianceInvoiceResponse complianceInvoice(InvoiceType type, String invoiceFileName, String token,
-			String secretKey) {
+	
+	
+	public boolean complianceInvoice(InvoiceType type,InvoiceResultType invoiceResultType, String invoiceFileName, String token,
+			String secretKey,int expectedStatusCode) {
+				
+		String invoiceRequestBody = null;
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
+		ComplianceInvoiceService complianceInvoiceService = new ComplianceInvoiceService(apiObj, properties);
+		ComplianceInvoiceResponse ComplianceInvoiceResponseObj=null;
+		String[] expectedCodes = null;
+		List<ComplianceInvoiceMessage> warningMsgs;
+		ArrayList<String> actualCodes = new ArrayList<String>(); ;
+		ArrayList<String> actualMsgs = new ArrayList<String>(); ;
+		//Step 1 Validate & sign & get invoice request body 
+		invoiceRequestBody = invoiceRequest(type, invoiceFileName);
+		if(invoiceRequestBody!=null) {
+		//Step 2 check on compliance request
+		ComplianceInvoiceResponseObj = complianceInvoiceService.generateComplianceInvoice(token, secretKey, invoiceRequestBody,expectedStatusCode);
+		switch (invoiceResultType) {
+			case ACCEPTED:
+			{
+			      checks.add((ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("PASS"));
+			      break;
+			}
+			case ACCEPTEDWITHWARNIG: {
+				expectedCodes = invoiceFileName.replace(".xml", "").split("_");
+				ArrayList<String> expectedCodesList = new ArrayList<String>(Arrays.asList(expectedCodes));
+				 warningMsgs=ComplianceInvoiceResponseObj.getValidationResults().getWarningMessages();
+				 for(ComplianceInvoiceMessage msg :warningMsgs)
+				 {
+					 actualCodes.add(msg.getCode());
+					 if(msg.getMessage().equals(null)|| msg.getMessage().isEmpty() || msg.getMessage().isBlank())
+					 {
+						 actualMsgs.add("Empty Msg");
+					 }
+					 else
+					 actualMsgs.add(msg.getMessage());
+					
+				 }
+				 //All codes are  found in response
+				 checks.add((ComplianceInvoiceResponseObj.getValidationResults().getStatus()).contains("WARN"));
+		         checks.add(Utils.compareLists(actualCodes, expectedCodesList));
+		         checks.add(!actualMsgs.contains("Empty Msg"));
+		         break;
+		         
+			}
+			case ERROR: {
+				
+				break;
+			}
+			}
 		
+		if(checks.stream().allMatch(bool -> bool == true))
+		{
+		 ReportManager.log("All Warning codes returned sucessfully with messages.");
+	     ReportManager.log("End compliance Warning invoice with warnings.");
+	     return true;
+		}
+		else {
+			 ReportManager.log("Either Warning codes  not displayed or messages are blank .");
+		}
+        
+		}
+		 ReportManager.log("End compliance Warning invoice with warnings.");
+		 return false;
+				
+		
+	}
+	
+	
+	
+	private String invoiceRequest(InvoiceType type, String invoiceFileName)
+	{
 		String invoiceSignedXml = null;
 		String invoiceRequestBody = null;
 		boolean validInvoice=false;
-		ComplianceInvoiceService complianceInvoiceService = new ComplianceInvoiceService(apiObj, properties);
-		ComplianceInvoiceResponse ComplianceInvoiceResponseObj=null;
 		switch (type) {
 		case STANDARDCREDIT:
 		case STANDARDDEBIT:
@@ -152,7 +232,7 @@ public class GenerateCSID {
 		// Step 5 sign fatoora
 		if(!validInvoice)
 		{
-		   return ComplianceInvoiceResponseObj;
+		   return invoiceRequestBody;
 		}
 		invoiceSignedXml = commands.signInvoice(invoiceFileName, type);
 		switch (type) {
@@ -174,11 +254,9 @@ public class GenerateCSID {
 		{
 		//Step 6 invoice request
 		invoiceRequestBody = commands.invoiceRequest(invoiceSignedXml, type);
-		//Step 7 check on compliance request
-		 ComplianceInvoiceResponseObj = complianceInvoiceService.generateComplianceInvoice(token, secretKey, invoiceRequestBody);
-		
 		}
-		return ComplianceInvoiceResponseObj;
+		
+		return invoiceRequestBody;
 	}
 	
 	public CSIDProductionResponse csidProduction( String token,String secretKey,String requestId) {
