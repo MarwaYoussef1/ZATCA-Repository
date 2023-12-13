@@ -38,7 +38,7 @@ public class ClearanceService {
 
 	}
 
-	public ClearanceResponse InvoiceClearance(String token,String secret,String invoiceBody) {
+	public ClearanceResponse InvoiceClearance(String token,String secret,String invoiceBody,int expectedStatusCode) {
 		ReportManager.log("Start calling clearance service to clear invoice");
 		ClearanceResponse responeObj = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +54,7 @@ public class ClearanceService {
 			System.out.println(response.body().asPrettyString());
 			ReportManager.log(response.body().asPrettyString());
 			
-			if(response.getStatusCode()==Constants.STATUS_CODE)
+			if(response.getStatusCode()==expectedStatusCode)
 			{
 			responeObj=response.body().as(ClearanceResponse.class);
 			clearenceStatus=responeObj.getClearanceStatus();

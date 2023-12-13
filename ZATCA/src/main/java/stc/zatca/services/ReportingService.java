@@ -38,7 +38,7 @@ public class ReportingService {
 
 	}
 
-	public ReportingResponse InvoiceReporting(String token,String secret,String invoiceBody) {
+	public ReportingResponse InvoiceReporting(String token,String secret,String invoiceBody,int expectedStatusCode) {
 		ReportManager.log("Start calling reporting service to clear invoice");
 		ReportingResponse responeObj = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +54,7 @@ public class ReportingService {
 			
 			ReportManager.log(response.body().asPrettyString());
 			System.out.println(response.body().asPrettyString());
-			if(response.getStatusCode()==Constants.STATUS_CODE)
+			if(response.getStatusCode()==expectedStatusCode)
 			{
 			responeObj=response.body().as(ReportingResponse.class);
 			reportingStatus=responeObj.getReportingStatus();

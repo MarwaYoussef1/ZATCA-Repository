@@ -136,8 +136,6 @@ public class Utils {
         ReportManager.log(command);
        // String[] commands = new String[] { "cmd.exe", "/c", "set JAVA_HOME="+Constants.SDK_JAVA_PATH+" && set PATH=%JAVA_HOME%\\bin;%PATH% && "+command };
         try {
-        	// ReportManager.log("Commands are  "+ commands);
-           /* Process p =Runtime.getRuntime().exec(commands, null, dir);*/
         	 ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C",command);
         	 pb.directory(dir);
         	 Map<String, String> envs = pb.environment();
