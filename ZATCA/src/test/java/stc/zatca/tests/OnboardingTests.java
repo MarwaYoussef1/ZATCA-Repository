@@ -134,15 +134,15 @@ public class OnboardingTests extends BaseTest {
 		// Step2 Generate invoice request & call compliance invoice to clear the
 		// invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTED,
-				invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				invoiceFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTED,
-				invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				invoiceCreditFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTED,
-				invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				invoiceDebitFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted  Debit Invoice Note cleared successfully.");
 		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
@@ -174,15 +174,15 @@ public class OnboardingTests extends BaseTest {
 		requestId = ComplianceCSIDResponseObj.getRequestID();
 		// Step2 Generate invoice request & call compliance invoice to clear the invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
-				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
-				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
-				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted  Debit Invoice Note cleared successfully.");
 		
@@ -217,28 +217,28 @@ public class OnboardingTests extends BaseTest {
 		// Step2 Generate invoice request & call compliance invoice to clear the
 		// invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTED,
-				standardInvoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTED,
-				standardInvoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceCreditFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTED,
-				standardInvoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceDebitFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Accepted  Debit Invoice Note cleared successfully.");
 
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
-				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
-				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceCreditFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
-				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTED, invoiceDebitFileName, token, secretKey, Constants.API_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Accepted  Debit Invoice Note cleared successfully.");
 
@@ -272,15 +272,15 @@ public class OnboardingTests extends BaseTest {
 		// Step2 Generate invoice request & call compliance invoice to clear the
 		// invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard  Warning Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Warning Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Warning  Debit Invoice Note cleared successfully.");
 		CSIDProductionResponseObj = generateCSIDObj.csidProduction(token, secretKey, requestId);
@@ -313,15 +313,15 @@ public class OnboardingTests extends BaseTest {
 		// Step2 Generate invoice request & call compliance invoice to clear the
 		// invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Warning Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified Warning Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified Warning  Debit Invoice Note cleared successfully.");
 
@@ -356,28 +356,28 @@ public class OnboardingTests extends BaseTest {
 		// Step2 Generate invoice request & call compliance invoice to clear the
 		// invoices
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDNOTE, InvoiceResultType.ACCEPTEDWITHWARNIG,
-				standardInvoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Warning Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDCREDIT, InvoiceResultType.ACCEPTEDWITHWARNIG,
-				standardInvoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceCreditFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Warning Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.STANDARDDEBIT, InvoiceResultType.ACCEPTEDWITHWARNIG,
-				standardInvoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				standardInvoiceDebitFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Standard Warning  Debit Invoice Note cleared successfully.");
 
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDNOTE,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Warning Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDCREDIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceCreditFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Warning Credit Invoice Note cleared successfully.");
 		complianceInvoice = generateCSIDObj.complianceInvoice(InvoiceType.SIMPLIFIEDDEBIT,
-				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.STATUS_CODE);
+				InvoiceResultType.ACCEPTEDWITHWARNIG, invoiceDebitFileName, token, secretKey, Constants.API_WARNING_STATUS_CODE);
 		Validations.assertThat().object(complianceInvoice).isTrue().perform();
 		ReportManager.log("Simplified  Warning  Debit Invoice Note cleared successfully.");
 

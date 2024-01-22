@@ -86,6 +86,32 @@ public class ClearanceReportingTests extends BaseTest {
 		return data;
 	}
 	
+	/**
+	 * Function to read data for testErrorClearanceInvoice testcase
+	 *
+	 * @return Object[][] 2d array contains data from excel sheet
+	 */
+
+	@DataProvider(name = "testErrorClearanceInvoiceTestData")
+	public Object[][] testErrorClearanceInvoiceTestData() throws InvalidFormatException, IOException {
+
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testErrorClearanceInvoice");
+		return data;
+	}
+	
+	/**
+	 * Function to read data for testErrorReportingInvoice testcase
+	 *
+	 * @return Object[][] 2d array contains data from excel sheet
+	 */
+
+	@DataProvider(name = "testErrorReportingInvoiceTestData")
+	public Object[][] testErrorReportingInvoiceTestData() throws InvalidFormatException, IOException {
+
+		Object[][] data = TestData.fetchData(properties.getProperty("testDataPath"), "testErrorReportingInvoice");
+		return data;
+	}
+	
 	
 
 	@Test(description="Test Accepted Clearance Invoice",dataProvider = "testAcceptedClearanceInvoiceTestData") 
@@ -95,7 +121,9 @@ public class ClearanceReportingTests extends BaseTest {
 		String secretKey = testContext.getAttribute(Constants.SECRET).toString();
 		ClearanceResponse clearanceResponseObj=null;
 		clearanceResponseObj=clearanceBusinessObj.invoiceClearance(invoiceType, InvoiceResultType.ACCEPTED,binarytoken, secretKey, invoiceFileName);
+		Validations.assertThat().object(clearanceResponseObj).isNotNull().perform();
 		Validations.assertThat().object(clearanceResponseObj.getClearedInvoice()).isNotNull().perform();
+		Validations.assertThat().object(clearanceResponseObj.getClearanceStatus()).isEqualTo(Constants.API_CLEARED_INVOICE).perform();
 	    ReportManager.log("Invoice " + invoiceFileName + " Cleared successfully.");
 		ReportManager.log("End Test clearance flow."); 
 	}
@@ -108,6 +136,7 @@ public class ClearanceReportingTests extends BaseTest {
 		ReportingResponse reportingResponseObj=null;
 		reportingResponseObj=reportingBusinessObj.invoiceReporting(invoiceType, InvoiceResultType.ACCEPTED,binarytoken, secretKey, invoiceFileName);
 		Validations.assertThat().object(reportingResponseObj).isNotNull().perform();
+		Validations.assertThat().object(reportingResponseObj.getReportingStatus()).isEqualTo(Constants.API_REPORTED_INVOICE).perform();
 	    ReportManager.log("Invoice " + invoiceFileName + " Reported successfully.");
 		ReportManager.log("End Test Reporting flow."); 
 	}
@@ -120,7 +149,9 @@ public class ClearanceReportingTests extends BaseTest {
 		ClearanceResponse clearanceResponseObj=null;
 		boolean warningsFound=false;
 		clearanceResponseObj=clearanceBusinessObj.invoiceClearance(invoiceType, InvoiceResultType.ACCEPTEDWITHWARNIG,binarytoken, secretKey, invoiceFileName);
+		Validations.assertThat().object(clearanceResponseObj).isNotNull().perform();
 		Validations.assertThat().object(clearanceResponseObj.getClearedInvoice()).isNotNull().perform();
+		Validations.assertThat().object(clearanceResponseObj.getClearanceStatus()).isEqualTo(Constants.API_CLEARED_INVOICE).perform();
 	    ReportManager.log("Invoice " + invoiceFileName + " Cleared successfully.");
 	    warningsFound=clearanceBusinessObj.checkWarningsInResponse(invoiceFileName, clearanceResponseObj);
 	    Validations.assertThat().object(warningsFound).isTrue().perform();
@@ -137,10 +168,48 @@ public class ClearanceReportingTests extends BaseTest {
 		boolean warningsFound=false;
 		reportingResponseObj=reportingBusinessObj.invoiceReporting(invoiceType,InvoiceResultType.ACCEPTEDWITHWARNIG, binarytoken, secretKey, invoiceFileName);
 		Validations.assertThat().object(reportingResponseObj).isNotNull().perform();
+		Validations.assertThat().object(reportingResponseObj).isNotNull().perform();
+		Validations.assertThat().object(reportingResponseObj.getReportingStatus()).isEqualTo(Constants.API_REPORTED_INVOICE).perform();
 	    ReportManager.log("Invoice " + invoiceFileName + " Reported successfully.");
 	    warningsFound=reportingBusinessObj.checkWarningsInResponse(invoiceFileName, reportingResponseObj);
 	    Validations.assertThat().object(warningsFound).isTrue().perform();
 	    ReportManager.log("Invoice Warnings returned successfully successfully.");
+		ReportManager.log("End Test Reporting flow."); 
+	}
+	
+	
+	@Test(description="Test Error Clearance Invoice",dataProvider = "testErrorClearanceInvoiceTestData") 
+	public void testErrorClearanceInvoice(String invoiceType,String invoiceFileName,ITestContext testContext){
+		ReportManager.log("Start Test clearance flow for standard Warning invoices.");
+		String binarytoken=testContext.getAttribute(Constants.BINARYSECURITYTOKEN).toString();
+		String secretKey = testContext.getAttribute(Constants.SECRET).toString();
+		ClearanceResponse clearanceResponseObj=null;
+		boolean errorsFound=false;
+		clearanceResponseObj=clearanceBusinessObj.invoiceClearance(invoiceType, InvoiceResultType.ERROR,binarytoken, secretKey, invoiceFileName);
+		Validations.assertThat().object(clearanceResponseObj).isNotNull().perform();
+		Validations.assertThat().object(clearanceResponseObj.getClearedInvoice()).isNull().perform();
+		Validations.assertThat().object(clearanceResponseObj.getClearanceStatus()).isEqualTo(Constants.API_NOT_CLEARED_INVOICE).perform();
+	    ReportManager.log("Invoice " + invoiceFileName + "  NOT Cleared successfully.");
+	    errorsFound=clearanceBusinessObj.checkErrorsInResponse(invoiceFileName, clearanceResponseObj);
+	    Validations.assertThat().object(errorsFound).isTrue().perform();
+	    ReportManager.log("Invoice Errors returned successfully successfully.");
+		ReportManager.log("End Test clearance flow."); 
+	}
+	
+	@Test(description="Test Error Reporting Invoice",dataProvider = "testErrorReportingInvoiceTestData") 
+	public void testErrorReportingInvoice(String invoiceType,String invoiceFileName,ITestContext testContext){
+		ReportManager.log("Start Test Reporting flow for simplified invoices.");
+		String binarytoken=testContext.getAttribute(Constants.BINARYSECURITYTOKEN).toString();
+		String secretKey = testContext.getAttribute(Constants.SECRET).toString();
+		ReportingResponse reportingResponseObj=null;
+		boolean errorsFound=false;
+		reportingResponseObj=reportingBusinessObj.invoiceReporting(invoiceType,InvoiceResultType.ERROR, binarytoken, secretKey, invoiceFileName);
+		Validations.assertThat().object(reportingResponseObj).isNotNull().perform();
+		Validations.assertThat().object(reportingResponseObj.getReportingStatus()).isEqualTo(Constants.API_NOT_REPORTED_INVOICE).perform();
+	    ReportManager.log("Invoice " + invoiceFileName + "NOT  Reported successfully.");
+	    errorsFound=reportingBusinessObj.checkErrorsInResponse(invoiceFileName, reportingResponseObj);
+	    Validations.assertThat().object(errorsFound).isTrue().perform();
+	    ReportManager.log("Invoice Errors returned successfully successfully.");
 		ReportManager.log("End Test Reporting flow."); 
 	}
 	

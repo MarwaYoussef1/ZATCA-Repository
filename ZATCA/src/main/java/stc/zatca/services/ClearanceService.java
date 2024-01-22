@@ -42,8 +42,7 @@ public class ClearanceService {
 		ReportManager.log("Start calling clearance service to clear invoice");
 		ClearanceResponse responeObj = null;
 		ObjectMapper mapper = new ObjectMapper();
-		String clearenceStatus;
-		String clearedInvoice;
+		
 		try {
 			ClearanceRequest clearanceRequestObj = mapper.readValue(invoiceBody, ClearanceRequest.class);
 			String nestedJsonPayload = mapper.writeValueAsString(clearanceRequestObj).replace("\n", "").replace("\r", "").replace(" ", "");			
@@ -57,13 +56,7 @@ public class ClearanceService {
 			if(response.getStatusCode()==expectedStatusCode)
 			{
 			responeObj=response.body().as(ClearanceResponse.class);
-			clearenceStatus=responeObj.getClearanceStatus();
-			clearedInvoice=responeObj.getClearedInvoice();
 			
-			if((clearenceStatus!=null && clearenceStatus.equals("CLEARED")) && (clearedInvoice!=null))
-			{
-				return responeObj;
-			}
 			}
 		} catch ( JsonProcessingException | JSONException e1) {
 			// TODO Auto-generated catch block

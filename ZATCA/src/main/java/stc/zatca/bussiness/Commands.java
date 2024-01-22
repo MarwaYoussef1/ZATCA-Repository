@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.shaft.cli.FileActions;
 import com.shaft.tools.io.ReportManager;
 
+import stc.zatca.utils.Constants;
 import stc.zatca.utils.Utils;
 
 public class Commands {
@@ -68,7 +69,7 @@ public class Commands {
 		}
 		case ERROR: {
 			
-			break;
+			return checkInvoiceErrors(invoiceFileName,result);
 		}
 		}
 
@@ -82,19 +83,56 @@ public class Commands {
 		String[] codes = invoiceFileName.replace(".xml", "").replace("_signed", "").split("_");
 		checks.add(result.contains(properties.getProperty("WarningValidationInvoiceMsg")));
 		checks.add(result.contains(properties.getProperty("SuccessValidateInvoiceMsg")));
-		String warningMessage;
-		String warningCode;
+		checks.addAll(searchInValidationResult(codes,result,Constants.SDK_WARNING));
+		if(checks.stream().allMatch(bool -> bool == true))
+		{
+		 ReportManager.log("All Warning codes displayed sucessfully with messages.");
+	     ReportManager.log("End Validate Warning invoice with warnings.");
+	     return true;
+		}
+		else {
+			 ReportManager.log("Either Warning codes  not displayed  or warning type is not correct or messages are blank .");
+		}
+         return false;
 		
+	
+	}
+	
+	public boolean checkInvoiceErrors(String invoiceFileName,String result) {
+		ReportManager.log("Start Validate invoice.");
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
+		String[] codes = invoiceFileName.replace(".xml", "").replace("_signed", "").split("_");
+		checks.add(result.contains(properties.getProperty("ErrorValidationInvoiceMsg")));
+		checks.addAll(searchInValidationResult(codes,result,Constants.SDK_ERROR));
+		if(checks.stream().allMatch(bool -> bool == true))
+		{
+		 ReportManager.log("All Error codes displayed sucessfully with messages.");
+	     ReportManager.log("End Validate  invoice with errors.");
+	     return true;
+		}
+		else {
+			 ReportManager.log("Either error codes  not displayed or ErrorType is not correct or messages are blank .");
+		}
+         return false;
+		
+	
+	}
+	
+	public static ArrayList<Boolean> searchInValidationResult(String[] codes,String result,String type)
+    {
+		String errorWarningMessage;
+		String errorWarningCode;
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
 		
 		try {
 			BufferedReader reader = new BufferedReader(new StringReader( result ));
 			  for(String code : codes)
 				{
-		         warningCode="CODE : "+code+", MESSAGE : ["+code+"]";
-		        if(!result.contains(warningCode))
+				  errorWarningCode="CODE : "+code+", MESSAGE :";
+		        if(!result.contains(errorWarningCode))
 		        {
 			   checks.add(false);
-			   return false;
+			   return checks;
 		       }
 				}
 		   while( true ) {
@@ -103,12 +141,13 @@ public class Commands {
 				break;
 		    for(String code : codes)
 			{
-		    warningCode="CODE : "+code+", MESSAGE : ["+code+"]";
-		    if(line.contains(warningCode))
+		    	errorWarningCode="CODE : "+code+", MESSAGE :";
+		    if(line.contains(errorWarningCode))
 		    {
 		    	checks.add(true);
-		    	warningMessage=line.substring(line.indexOf(warningCode)).replace(warningCode,"");
-		    	if(!warningMessage.isEmpty())
+		    	checks.add(line.contains(type));
+		    	errorWarningMessage=line.substring(line.indexOf(errorWarningCode)).replace(errorWarningCode,"");
+		    	if(!errorWarningMessage.isEmpty())
 		    		checks.add(true);
 		    }
 			}
@@ -123,20 +162,9 @@ public class Commands {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(checks.stream().allMatch(bool -> bool == true))
-		{
-		 ReportManager.log("All Warning codes displayed sucessfully with messages.");
-	     ReportManager.log("End Validate Warning invoice with warnings.");
-	     return true;
-		}
-		else {
-			 ReportManager.log("Either Warning codes  not displayed or messages are blank .");
-		}
-         return false;
-		
-	
-	}
+		 return checks;
+    }
+   
 
 	public String signInvoice(String invoiceFileName, InvoiceType type) {
 		ReportManager.log("Start Signing invoice ");

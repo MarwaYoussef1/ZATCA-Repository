@@ -48,7 +48,7 @@ public class CSIDProductionService {
 		System.out.println(response.body().asPrettyString());
 		
 	
-	    if(response.getStatusCode()==Constants.STATUS_CODE)
+	    if(response.getStatusCode()==Constants.API_STATUS_CODE)
 	    	responeObj =response.body().as(CSIDProductionResponse.class);
 	    
 	    return responeObj;

@@ -6,8 +6,10 @@
 package stc.zatca.utils;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -141,8 +143,8 @@ public class Utils {
         	 Map<String, String> envs = pb.environment();
              envs.put("JAVA_HOME",Constants.SDK_JAVA_PATH);
              envs.remove("Path");
-             String newPath=System.getenv("Path").replace("jdk-17.0.1","jdk-11.0.17");
-             envs.put("Path",Constants.SDK_JAVA_PATH_BIN+ ";" + newPath+";"+";"+Constants.SDK_FOLDER_PATH);
+             //String newPath=System.getenv("Path").replace("jdk-17.0.1","jdk-11.0.17");
+             envs.put("Path",Constants.SDK_JAVA_PATH_BIN+ ";" +";"+";"+Constants.SDK_FOLDER_PATH);
             Process p= pb.start();
             String result = IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
             String error = IOUtils.toString(p.getErrorStream(), StandardCharsets.UTF_8);
@@ -173,7 +175,8 @@ public class Utils {
 			  e.printStackTrace();
 			}
     }
-   
+    
+    
 
   
 }

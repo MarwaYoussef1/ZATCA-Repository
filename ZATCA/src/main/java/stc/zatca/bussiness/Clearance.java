@@ -47,6 +47,7 @@ public class Clearance  {
 		//Step1 validate the invoice
 		boolean validInvoice = commands.validateInvoice(invoiceFileName, type);
 		if (validInvoice) {
+			
 			//Step2 Sign the invoice
 			invoiceSignedXml = commands.signInvoice(invoiceFileName, type);
 			//Step3 invoiceRequest
@@ -55,19 +56,22 @@ public class Clearance  {
 			switch (invoiceResultType) {
 			case ACCEPTED:
 			{
-				expectedStatusCode=Constants.STATUS_CODE;
+				expectedStatusCode=Constants.API_STATUS_CODE;
 				break;
 			}
 			case ACCEPTEDWITHWARNIG: {
-				expectedStatusCode=Constants.WARNING_STATUS_CODE;
+				expectedStatusCode=Constants.API_WARNING_STATUS_CODE;
 				break;
 		         
 			}
-			case ERROR: {
-				
+			case ERROR:
+			{
+				expectedStatusCode=Constants.API_ERROR_STATUS_CODE;
 				break;
 			}
+			
 			}
+			
 			clearanceResponseObj= clearanceService.InvoiceClearance(token, secret, invoiceRequestBody,expectedStatusCode);
 			//Step5 Filter response
 			return clearanceResponseObj;
@@ -78,30 +82,9 @@ public class Clearance  {
 	
 	public boolean checkWarningsInResponse(String invoiceFileName,ClearanceResponse clearanceResponseObj)
 	{
-		ArrayList<Boolean> checks =new ArrayList<Boolean>();
-		String[] expectedCodes = null;
 		boolean invoiceChecked;
-		List<ClearanceMessage> warningMsgs;
-		ArrayList<String> actualCodes = new ArrayList<String>();
-		ArrayList<String> actualMsgs = new ArrayList<String>();
-		expectedCodes = invoiceFileName.replace(".xml", "").split("_");
-		ArrayList<String> expectedCodesList = new ArrayList<String>(Arrays.asList(expectedCodes));
-	    warningMsgs=clearanceResponseObj.getValidationResults().getWarningMessages();
-	     for(ClearanceMessage msg :warningMsgs)
-			 {
-				 actualCodes.add(msg.getCode());
-				 if(msg.getMessage().equals(null)|| msg.getMessage().isEmpty() || msg.getMessage().isBlank())
-				 {
-					 actualMsgs.add("Empty Msg");
-				 }
-				 else
-				 actualMsgs.add(msg.getMessage());
-				
-			 }
-			 //All codes are  found in response
-			 checks.add((clearanceResponseObj.getValidationResults().getStatus()).contains("WARNING"));
-	         checks.add(Utils.compareLists(actualCodes, expectedCodesList));
-	         checks.add(!actualMsgs.contains("Empty Msg"));
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
+		checks=checkCodesMsgsInReponse(invoiceFileName,InvoiceResultType.ACCEPTEDWITHWARNIG,clearanceResponseObj);
 	     if(checks.stream().allMatch(bool -> bool == true))
 		{
 	      invoiceChecked=true;
@@ -117,6 +100,72 @@ public class Clearance  {
 		 ReportManager.log("End compliance Warning invoice with warnings.");
 	
          return invoiceChecked;
+	}
+	
+	public boolean checkErrorsInResponse(String invoiceFileName,ClearanceResponse clearanceResponseObj)
+	{
+		boolean invoiceChecked;
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
+		checks=checkCodesMsgsInReponse(invoiceFileName,InvoiceResultType.ERROR,clearanceResponseObj);
+	     if(checks.stream().allMatch(bool -> bool == true))
+		{
+	      invoiceChecked=true;
+		 ReportManager.log("All Error codes returned sucessfully with messages.");
+	     ReportManager.log("End compliance invoice with Errors.");
+	     }
+		else {
+			invoiceChecked=false;
+			 ReportManager.log("Either Error codes   not displayed or messages are blank .");
+		}
+        
+		
+		 ReportManager.log("End compliance  invoice with Errors.");
+	
+         return invoiceChecked;
+	}
+	
+	private  ArrayList<Boolean> checkCodesMsgsInReponse(String invoiceFileName,InvoiceResultType invoiceResultType,ClearanceResponse clearanceResponseObj)
+	{
+		ArrayList<Boolean> checks =new ArrayList<Boolean>();
+		List<ClearanceMessage> clearanceMsgs = null;
+		String[] expectedCodes = null;
+		String statusMsg = null;
+		ArrayList<String> actualCodes = new ArrayList<String>();
+		ArrayList<String> actualMsgs = new ArrayList<String>();
+		expectedCodes = invoiceFileName.replace(".xml", "").split("_");
+		ArrayList<String> expectedCodesList = new ArrayList<String>(Arrays.asList(expectedCodes));
+		switch (invoiceResultType) {
+		case ACCEPTEDWITHWARNIG: {
+			clearanceMsgs=clearanceResponseObj.getValidationResults().getWarningMessages();
+			statusMsg=Constants.API_WARNING_INVOICE;
+			break;
+	         
+		}
+		case ERROR:
+		{
+			clearanceMsgs=clearanceResponseObj.getValidationResults().getErrorMessages();
+			statusMsg=Constants.API_ERROR_INVOICE;
+			break;
+		}
+		}
+		
+		 for(ClearanceMessage msg :clearanceMsgs)
+		 {
+			 actualCodes.add(msg.getCode());
+			 if(msg.getMessage().equals(null)|| msg.getMessage().isEmpty() || msg.getMessage().isBlank())
+			 {
+				 actualMsgs.add("Empty Msg");
+			 }
+			 else
+			 actualMsgs.add(msg.getMessage());
+			
+		 }
+		 //All codes are  found in response
+		 checks.add((clearanceResponseObj.getValidationResults().getStatus()).contains(statusMsg));
+         checks.add(actualCodes.containsAll(expectedCodesList));
+         checks.add(!actualMsgs.contains("Empty Msg"));
+         
+         return checks;
 	}
 
 	

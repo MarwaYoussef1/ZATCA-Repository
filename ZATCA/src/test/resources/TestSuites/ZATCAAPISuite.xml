@@ -14,9 +14,9 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
+	</test> 
 
-	  <test name="Test Accepted Simplified Invoices">
+	 <test name="Test Accepted Simplified Invoices">
 		<classes>
 			<class name="stc.zatca.tests.OnboardingTests">
 				<methods>
@@ -29,9 +29,9 @@
 				</methods>
 			</class>
 		</classes>
-	</test> 
+	</test>
 	
-	<test name="Test Warning Standard Invoices">
+	 <test name="Test Warning Standard Invoices">
 		<classes>
 			<class name="stc.zatca.tests.OnboardingTests">
 				<methods>
@@ -60,4 +60,34 @@
 			</class>
 		</classes>
 	</test> 
+	
+	 <test name="Test Error Standard Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDStandardAcceptedInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testErrorClearanceInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>  
+	
+    <test name="Test Error Simplified Invoices">
+		<classes>
+			<class name="stc.zatca.tests.OnboardingTests">
+				<methods>
+					<include name="testCSIDSimplifiedAcceptedInvoice" />
+				</methods>
+			</class>
+			<class name="stc.zatca.tests.ClearanceReportingTests">
+				<methods>
+					<include name="testErrorReportingInvoice" />
+				</methods>
+			</class>
+		</classes>
+	</test>
 </suite>

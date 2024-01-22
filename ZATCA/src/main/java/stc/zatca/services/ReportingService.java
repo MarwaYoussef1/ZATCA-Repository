@@ -42,8 +42,6 @@ public class ReportingService {
 		ReportManager.log("Start calling reporting service to clear invoice");
 		ReportingResponse responeObj = null;
 		ObjectMapper mapper = new ObjectMapper();
-		String reportingStatus;
-		//String clearedInvoice;
 		try {
 			ReportingRequest reportingRequestObj = mapper.readValue(invoiceBody, ReportingRequest.class);
 			String nestedJsonPayload = mapper.writeValueAsString(reportingRequestObj).replace("\n", "").replace("\r", "").replace(" ", "");			
@@ -57,13 +55,7 @@ public class ReportingService {
 			if(response.getStatusCode()==expectedStatusCode)
 			{
 			responeObj=response.body().as(ReportingResponse.class);
-			reportingStatus=responeObj.getReportingStatus();
-			//clearedInvoice=responeObj.getClearedInvoice();
 			
-			if((reportingStatus!=null && reportingStatus.equals("REPORTED")) )//&& (clearedInvoice!=null)
-			{
-				return responeObj;
-			}
 			}
 		} catch ( JsonProcessingException | JSONException e1) {
 			// TODO Auto-generated catch block

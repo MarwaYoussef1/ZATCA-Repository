@@ -40,7 +40,7 @@ public class ComplianceCSIDService {
 
 		ReportManager.log(response.body().asPrettyString());
 		System.out.println(response.body().asPrettyString());
-		if (response.getStatusCode() == Constants.STATUS_CODE) {
+		if (response.getStatusCode() == Constants.API_STATUS_CODE) {
 			responeObj = response.body().as(ComplianceCSIDResponse.class);
 			ReportManager.log("End calling complianceCSID service ");
 			if (responeObj.getErrors() != null) {

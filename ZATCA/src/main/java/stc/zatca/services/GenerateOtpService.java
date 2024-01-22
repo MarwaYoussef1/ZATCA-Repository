@@ -38,7 +38,7 @@ public class GenerateOtpService {
 		Response response = apiObj.buildNewRequest(generateOtpUrl, RequestType.GET)
 				.addHeader("vat", vatNumber).addHeader("request-from", "zatca-service").addHeader("api-key", apiKey).setParameters(noOfOtpsValue, ParametersType.QUERY).perform();
 		ReportManager.log(response.body().asPrettyString());		
-	    if(response.getStatusCode()==Constants.STATUS_CODE)
+	    if(response.getStatusCode()==Constants.API_STATUS_CODE)
 	    {
 		List<Object> otps=RestActions.getResponseJSONValueAsList(response, "OTPs");
 		otp=otps.get(0).toString();

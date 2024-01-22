@@ -10,7 +10,7 @@
 	<properties>
 		<!-- Execution Properties -->
 		<!-- Make sure you point to the latest in-house version: https://bintray.com/mohabmohie/SHAFT/SHAFT_Engine -->
-		<shaft_engine.version>7.3.20230824</shaft_engine.version>
+		<shaft_engine.version>8.1.20240102</shaft_engine.version>
 		<org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
 
 
@@ -40,11 +40,12 @@
 		<!-- DO NOT CHANGE -->
 		<encoding.type>UTF-8</encoding.type>
 		<jdk.version>17</jdk.version>
-		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-		<surefire-testng.version>3.1.2</surefire-testng.version>
-		<aspectjweaver.version>1.9.19</aspectjweaver.version>
+	    <aspectjweaver.version>1.9.21</aspectjweaver.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <surefire-testng.version>3.2.2</surefire-testng.version>
+        <junit-jupiter-engine.version>5.10.1</junit-jupiter-engine.version>
 		<apachecommons.version>2.7</apachecommons.version>
 		<commons-lang.version>2.6</commons-lang.version>
 	</properties>
